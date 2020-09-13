@@ -56,9 +56,10 @@ testIO name bnd f =  do
 
 
 test :: MonadError String m => String -> MaxPos -> (Pos -> Pos) -> m String
-test name bnd f = case all (\i -> i == f i) [0..bnd] of
-                   True  -> return (name ++ " OK...")
-                   False -> throwError (name ++ " failed!!!")
+test name bnd f = if all (\ i -> i == f i) [0 .. bnd] then
+                      return (name ++ " OK...")
+                  else
+                      throwError (name ++ " failed!!!")
 
 
 
@@ -132,7 +133,7 @@ validPos = do
 
 m10to18 m = [1,2,3,6,9,12,15,16,17,18] !! (m-1)
 
-posValidator (x, y, z) = (perestParity (fromX2 x) + perestParity (fromY2 y) + perestParity (fromZ2 z)) `mod` 2 == 0
+posValidator (x, y, z) = even $ perestParity (fromX2 x) + perestParity (fromY2 y) + perestParity (fromZ2 z)
 
 hodPredHod 0 h = True
 hodPredHod p h = let
@@ -143,7 +144,7 @@ hodPredHod p h = let
                    b4 = r p == 1 && r h == 4
                    b5 = r p == 2 && r h == 3
                  in
-                   not $ any id [b1, b2, b3, b4, b5]
+                   not $ or [b1, b2, b3, b4, b5]
 
 rnd :: Int -> IO Int
 rnd b = fmap (`mod` b) randomIO

@@ -14,10 +14,10 @@ mover2Fast :: UArray (Povorot, Pos) Pos -> Pos -> [Pos]
 mover2Fast arr pos = map (\pov -> moveInCoords arr pov pos) [1..10]
 
 buildMover :: (Povorot -> Pos -> Pos) -> (Pos -> [Pos])
-buildMover single = \pos -> map (flip single pos) [1..18]
+buildMover single pos = map (`single` pos) [1 .. 18]
 
 buildMover2 :: (Povorot -> Pos -> Pos) -> (Pos -> [Pos])
-buildMover2 single = \pos -> map (flip single pos) [1,2,3,6,9,12,15,16,17,18]
+buildMover2 single pos = map (`single` pos) [1, 2, 3, 6, 9, 12, 15, 16, 17, 18]
 ----------------------------------------------------
 
  
