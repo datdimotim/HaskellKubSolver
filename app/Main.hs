@@ -9,10 +9,11 @@ import Data.Array.Unboxed
 import Data.Array.MArray
 import Data.Array.ST
 import Control.Monad.ST
-import Control.Monad.Trans.List
+import ListT hiding (take, head, null)
 import Data.Foldable ()
 import qualified Data.Map.Strict as Map
 import System.Random
+import System.IO
 
 import MathComb
 
@@ -20,6 +21,7 @@ import MathComb
 
 main :: IO ()
 main = do
+   hSetBuffering stdout NoBuffering
    --Right except <- runExceptT $ testAll `catchError` return
    --putStrLn except
    --print $ length (elems moveTable) 

@@ -24,6 +24,7 @@ dependencies:
 - containers >= 0.6.2.1
 - mtl >= 2.2.2
 - transformers >= 0.5.6.2
+- list-t >= 1.0.4
 - array >= 0.5.4.0
 - random
 
@@ -35,9 +36,10 @@ executables:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
+    - -O2
+    #- -threaded
+    #- -rtsopts
+    #- -with-rtsopts=-N
     dependencies:
     - hs-kub
 

@@ -1,8 +1,10 @@
+{-# LANGUAGE TupleSections #-}
+
 module DeepTableBuilder where
 
 import KubTypes
 
-import Control.Monad.Trans.List
+import ListT hiding (null, repeat, take)
 import Data.Array.Unboxed
 import Data.Array.MArray
 import Data.Array.ST
@@ -31,7 +33,7 @@ buildDeepTable mover = fst $ execState (fixed [0]) (fromList [(0,0)], 0)  where
    p <- mover p ;
    guard $ notMember p pairs ;
    return p ; }
-  let pairs' = fromList (map (\p->(p,depth+1)) newPs) `union` pairs
+  let pairs' = fromList (map (, depth + 1) newPs) `union` pairs
   let depth' = depth + 1  
   put (pairs', depth')
   return newPs 
@@ -43,7 +45,7 @@ buildDeepTableST :: (Pos -> [Pos]) -> Array Pos Depth
 buildDeepTableST mover = runSTArray $ do
   arr <- fillSTArray (0,40319) 20
   writeArray arr 0 0
-  runListT . fixed arr $ 0 
+  ListT.toList . fixed arr $ 0 
   return arr
   where
 
@@ -57,7 +59,7 @@ buildDeepTableST mover = runSTArray $ do
 
 step :: (Pos -> [Pos]) -> STArray s Pos Depth -> Depth -> Pos ->  ListT (ST s) Pos
 step mover arr d p = do 
-    p <- ListT . return . mover $ p
+    p <- fromFoldable . mover $ p
     isUpdated <- lift $ testAndUpdate arr (d+1) p
     guard isUpdated
     return p 
@@ -66,7 +68,7 @@ step mover arr d p = do
 ---------------- HELPERS FOR access to ST Array ------------------------
 fillSTArray :: (Ix i, MArray a e m) => (i, i) -> e -> m (a i e)
 fillSTArray range e = let sz = rangeSize range
-                          es = take sz $ repeat e
+                          es = replicate sz e
                       in newListArray range es 
 
 
