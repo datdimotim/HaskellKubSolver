@@ -11,7 +11,6 @@ import Data.Array.ST
 import Control.Monad.ST
 import ListT hiding (take, head, null)
 import Data.Foldable ()
-import qualified Data.Map.Strict as Map
 import System.Random
 import System.IO
 
@@ -137,7 +136,7 @@ m10to18 m = [1,2,3,6,9,12,15,16,17,18] !! (m-1)
 
 posValidator (x, y, z) = even $ perestParity (fromX2 x) + perestParity (fromY2 y) + perestParity (fromZ2 z)
 
-hodPredHod 0 h = True
+hodPredHod 0 _ = True
 hodPredHod p h = let
                    r = (`div` 3) . (\x -> x-1) 
                    b1 = p /= 0 && h == 0
