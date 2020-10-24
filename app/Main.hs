@@ -13,7 +13,8 @@ import ListT hiding (take, head, null)
 import Data.Foldable ()
 import System.Random
 import System.IO
-
+import Data.UnixTime
+import Data.Ratio
 import MathComb
 
 
@@ -21,6 +22,8 @@ import MathComb
 main :: IO ()
 main = do
    hSetBuffering stdout NoBuffering
+   startTime <- getUnixTime
+   putStrLn "Starting"
    --Right except <- runExceptT $ testAll `catchError` return
    --putStrLn except
    --print $ length (elems moveTable) 
@@ -29,12 +32,18 @@ main = do
    print $ chart y2DeepTable
    print $ chart z2DeepTable
    print "=============="
-   prettyPrint $ take 100 $ map solverPos validPos
+   prettyPrint $ take 10 $ map solverPos validPos
    p <- rndPos
    print p
    print $ solver1 p
+   finishTime <- getUnixTime
+   let diffMicros = unixDiffTimeToMicros $ finishTime `diffUnixTime` startTime
+   putStrLn $ "Total time: " ++ show (diffMicros `div` 1000) ++ "ms"
    return ()
 
+unixDiffTimeToMicros :: UnixDiffTime -> Integer
+unixDiffTimeToMicros diff = ((* 1000000) . Data.Ratio.numerator .toRational . udtSeconds $ diff)
+                            + (toInteger . udtMicroSeconds $ diff)
 
 testAll :: ExceptT String IO String
 testAll = do

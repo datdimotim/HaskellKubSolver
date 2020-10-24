@@ -27,6 +27,7 @@ dependencies:
 - list-t >= 1.0.4
 - array >= 0.5.4.0
 - random
+- unix-time >= 0.4.7
 
 library:
   source-dirs: src
