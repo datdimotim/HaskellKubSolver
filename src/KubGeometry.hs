@@ -4,11 +4,6 @@ import KubTypes
 import CubieCoord
 
 import Prelude hiding (foldr, foldl)
-import Control.Monad.State.Strict
-import Data.Map.Strict hiding (map,filter,foldl,foldr,fold',null,take,drop)
-import qualified Data.Map.Strict as Map
-import Data.Array.Unboxed
-import qualified Data.Array.Unboxed as Array
 
 
 rotate a b c d x | x == a    = d

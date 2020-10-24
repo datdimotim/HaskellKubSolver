@@ -6,7 +6,6 @@ import DeepTableBuilder
 import KubGeometry
 
 import Data.Array.Unboxed
-import qualified Data.Array.Unboxed as Array
 
 
 ----------------------------------------------------------------

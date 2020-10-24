@@ -19,30 +19,24 @@ getCubieSet uo up ro rp = do
 
 
 checkRebroOr :: [Z] -> Bool
-checkRebroOr ls = if ( length ls == 12) && 
-                     (all  (\x -> x<2 && x>=0) ls) && 
-                     (foldr (+) 0  ls) `mod` 2 == 0 then True
-                else False
+checkRebroOr ls = length ls == 12
+                  && all (\ x -> x < 2 && x >= 0) ls 
+                  && even (sum ls)
 
 checkUgolOr :: [Z] -> Bool
-checkUgolOr ls = if (length ls == 8) && 
-                  (all  (\x -> x<3 && x>=0) ls) &&
-                  (foldr (+) 0   ls) `mod` 3 == 0 then True
-               else False
+checkUgolOr ls = length ls == 8
+                 && all (\ x -> x < 3 && x >= 0) ls 
+                 && sum ls `mod` 3 == 0
  
 checkUgolPer :: [Z] -> Bool
-checkUgolPer ls = if length ls == 8 &&
-                   present ls 0 then True
-                else False where
+checkUgolPer ls = length ls == 8 && present ls 0 where
  present _ 8 = True
- present ls n = (any (==n) ls) && (present ls (n+1))
+ present ls n = n `elem` ls && present ls (n+1)
 
 checkRebroPer :: [Z] -> Bool
-checkRebroPer ls = if length ls == 12 &&
-                   present ls 0 then True
-                else False where
+checkRebroPer ls = length ls == 12 && present ls 0 where
  present _ 12 = True
- present ls n = (any (==n) ls) && (present ls (n+1))
+ present ls n = n `elem` ls && present ls (n+1)
 
 checkParity :: [Z] -> [Z] -> Bool
 checkParity u r = ((perestParity u + perestParity r) `mod` 2) == 0

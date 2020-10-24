@@ -10,8 +10,7 @@ import Data.Array.MArray
 import Data.Array.ST
 import Control.Monad.ST
 import Control.Monad.State.Strict
-import Data.Map.Strict hiding (map,filter,foldl,foldr,fold',null,take)
-import qualified Data.Map.Strict as Map
+import Data.Map.Strict hiding (map,filter,foldl,foldr,null,take)
 
 
 -------------------- NAIVE VERSION ---------------------------------

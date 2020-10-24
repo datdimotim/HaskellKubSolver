@@ -105,7 +105,7 @@ solver1 = head . solver
 solverPos p = (p, solver1 p)
 
 prettyPrint :: Show a => [a] -> IO ()
-prettyPrint = putStrLn . foldr (++) "" . map ((++ ['\n']) . show)
+prettyPrint = putStrLn . concatMap ((++ ['\n']) . show)
 
 nextVars :: N -> [N]
 nextVars (N (x, y, z) is d) = let
