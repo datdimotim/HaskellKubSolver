@@ -36,12 +36,12 @@ upSide = 16
        |__|__|__|/    
 -}
 
-mainRotatesToFullRotates :: String -> (Povorot -> Int -> Int) -> Povorot -> Int -> Int
-mainRotatesToFullRotates msg rotater np | np == 0               = id 
-                                        | np > 18               = error $ msg ++ " np > 18: np=" ++ show np
-                                        | (np - 1) `mod` 3 == 2 = let t = mainRotatesToFullRotates msg rotater (np-2) in t . t
-                                        | (np - 1) `mod` 3 == 1 = let t = mainRotatesToFullRotates msg rotater (np-1) in t . t . t 
-                                        | (np - 1) `mod` 3 == 0 = rotater np
+mainRotatesToFullRotates :: (Povorot -> Int -> Int) -> Povorot -> Int -> Int
+mainRotatesToFullRotates rotater np | np == 0               = id 
+                                    | np > 18               = error $ " np > 18: np=" ++ show np
+                                    | (np - 1) `mod` 3 == 2 = let t = mainRotatesToFullRotates rotater (np-2) in t . t
+                                    | (np - 1) `mod` 3 == 1 = let t = mainRotatesToFullRotates rotater (np-1) in t . t . t 
+                                    | (np - 1) `mod` 3 == 0 = rotater np
 
 moveInCoordsSlow :: ([Int] -> Pos) -> (Pos -> [Int]) -> (Povorot -> Int -> Int) -> Povorot -> Pos -> Pos
 moveInCoordsSlow to from cubieMover p = to . map (cubieMover p) . from
@@ -56,7 +56,7 @@ x2ElemRotate np | np == downSide  = rotate 5 4 7 6
 
 
 x2MoveSlow :: Povorot -> Pos -> Pos
-x2MoveSlow = moveInCoordsSlow toX2 fromX2 (mainRotatesToFullRotates "x2 mover" x2ElemRotate)
+x2MoveSlow = moveInCoordsSlow toX2 fromX2 (mainRotatesToFullRotates x2ElemRotate)
 
 
 {-           _________
@@ -92,7 +92,7 @@ y2MoveSlow = let
                 extend = (++ [8, 9, 10, 11])
                 proj   = take 8
              in 
-                moveInCoordsSlow (toY2 . proj) (extend . fromY2) (mainRotatesToFullRotates "y2 mover" y2ElemRotate)
+                moveInCoordsSlow (toY2 . proj) (extend . fromY2) (mainRotatesToFullRotates y2ElemRotate)
 
 
 z2MoveSlow :: Povorot -> Pos -> Pos
@@ -100,7 +100,7 @@ z2MoveSlow = let
                 extend = ([0..7] ++) . map (+8)
                 proj   = map (\x -> x - 8) . drop 8
              in 
-                moveInCoordsSlow (toZ2 . proj) (extend . fromZ2) (mainRotatesToFullRotates "z2 mover" y2ElemRotate)
+                moveInCoordsSlow (toZ2 . proj) (extend . fromZ2) (mainRotatesToFullRotates y2ElemRotate)
 
 
 -- ===============================================================================
@@ -141,7 +141,7 @@ x1MoveCubie :: Povorot -> [Int] -> [Int]
 x1MoveCubie np = map snd . sortOn fst . map (x1ElemRotate np) . zip [0..]
 
 x1MoveSlow :: Povorot -> Pos -> Pos
-x1MoveSlow = mainRotatesToFullRotates "" $ \np -> toX1 . x1MoveCubie np . fromX1
+x1MoveSlow = mainRotatesToFullRotates $ \np -> toX1 . x1MoveCubie np . fromX1
 
 
 {-           _________
@@ -174,4 +174,4 @@ y1MoveCubie :: Povorot -> [Int] -> [Int]
 y1MoveCubie np = map snd . sortOn fst . map (y1ElemRotate np) . zip [0..]
 
 y1MoveSlow :: Povorot -> Pos -> Pos
-y1MoveSlow = mainRotatesToFullRotates "" $ \np -> toY1 . y1MoveCubie np . fromY1
+y1MoveSlow = mainRotatesToFullRotates $ \np -> toY1 . y1MoveCubie np . fromY1
