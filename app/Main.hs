@@ -31,6 +31,7 @@ main = do
    print $ chart x2DeepTable
    print $ chart y2DeepTable
    print $ chart z2DeepTable
+   print $ chart x1DeepTable
    print "=============="
    prettyPrint $ take 10 $ map solverPos validPos
    p <- rndPos

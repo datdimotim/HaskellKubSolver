@@ -1,9 +1,10 @@
-module KubGeometry (x2MoveSlow, y2MoveSlow, z2MoveSlow) where
+module KubGeometry (x2MoveSlow, y2MoveSlow, z2MoveSlow, x1MoveSlow, x1MoveCubie) where
 
 import KubTypes
 import CubieCoord
 
 import Prelude hiding (foldr, foldl)
+import Data.List
 
 
 rotate a b c d x | x == a    = d
@@ -35,15 +36,17 @@ upSide = 16
        |__|__|__|/    
 -}
 
+mainRotatesToFullRotates :: String -> (Povorot -> Int -> Int) -> Povorot -> Int -> Int
 mainRotatesToFullRotates msg rotater np | np == 0               = id 
-                                        | np > 18               = error $ msg ++ " np > 18: np=" ++ (show np)
+                                        | np > 18               = error $ msg ++ " np > 18: np=" ++ show np
                                         | (np - 1) `mod` 3 == 2 = let t = mainRotatesToFullRotates msg rotater (np-2) in t . t
                                         | (np - 1) `mod` 3 == 1 = let t = mainRotatesToFullRotates msg rotater (np-1) in t . t . t 
                                         | (np - 1) `mod` 3 == 0 = rotater np
 
+moveInCoordsSlow :: ([Int] -> Pos) -> (Pos -> [Int]) -> (Povorot -> Int -> Int) -> Povorot -> Pos -> Pos
 moveInCoordsSlow to from cubieMover p = to . map (cubieMover p) . from
 
-x2ElemRotate :: Int -> Int -> Int
+x2ElemRotate :: Povorot -> Int -> Int
 x2ElemRotate np | np == downSide  = rotate 5 4 7 6
                 | np == frontSide = rotate 0 4 5 1
                 | np == leftSide  = rotate 2 1 5 6
@@ -71,7 +74,7 @@ x2MoveSlow = moveInCoordsSlow toX2 fromX2 (mainRotatesToFullRotates "x2 mover" x
        |__|__|__|/    
 -}
 
-y2ElemRotate :: Int -> Int -> Int
+y2ElemRotate :: Povorot -> Int -> Int
 y2ElemRotate np | np == downSide  = rotate 4  7  6  5
                 | np == frontSide = rotate 4  9  0  8
                 | np == leftSide  = rotate 1  9  5  10
@@ -100,4 +103,42 @@ z2MoveSlow = let
                 moveInCoordsSlow (toZ2 . proj) (extend . fromZ2) (mainRotatesToFullRotates "z2 mover" y2ElemRotate)
 
 
+-- ===============================================================================
 
+{-           _________
+            /2 /  /3 /|
+           /__/__/__/3|
+          /  /  /  /| |
+         /__/__/__/ |/|
+        /1 /  /0 /| | |
+       /__/__/__/0|/|/|
+       | 1|  |0 | | |7/
+       |__|__|__|/|/|/
+       |  |  |  | | /
+       |__|__|__|/|/
+       |5 |  |4 |4/
+       |__|__|__|/
+-}
+
+rotateOr (a, doa) (b, dob) (c, doc) (d, dod) (x, ox) | x == a    = (d, ox + dod)
+                                                     | x == b    = (a, ox + doa)
+                                                     | x == c    = (b, ox + dob)
+                                                     | x == d    = (c, ox + doc)
+                                                     | otherwise = (x, ox)
+
+x1ElemRotate :: Povorot -> (Int, Int) -> (Int, Int)
+x1ElemRotate np p = let
+                      cycles np | np == downSide  = rotateOr (5, 0) (4, 0) (7, 0) (6, 0)
+                                | np == frontSide = rotateOr (5, 2) (1, 1) (0, 2) (4, 1)
+                                | np == leftSide  = rotateOr (2, 1) (1, 2) (5, 1) (6, 2)
+                                | np == rightSide = rotateOr (4, 2) (0, 1) (3, 2) (7, 1)
+                                | np == backSide  = rotateOr (7, 2) (3, 1) (2, 2) (6, 1)
+                                | np == upSide    = rotateOr (0, 0) (1, 0) (2, 0) (3, 0)
+                    in
+                      case cycles np p of (n, orient) -> (n, orient `mod` 3)
+
+x1MoveCubie :: Povorot -> [Int] -> [Int]
+x1MoveCubie np = map snd . sortOn fst . map (x1ElemRotate np) . zip [0..]
+
+x1MoveSlow :: Povorot -> Pos -> Pos
+x1MoveSlow = mainRotatesToFullRotates "" $ \np -> toX1 . x1MoveCubie np . fromX1

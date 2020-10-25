@@ -40,9 +40,9 @@ buildDeepTable mover = fst $ execState (fixed [0]) (fromList [(0,0)], 0)  where
 -----------------------------------------------------------------------
 
 ------------------- ST Array version ----------------------------------
-buildDeepTableST :: (Pos -> [Pos]) -> Array Pos Depth 
-buildDeepTableST mover = runSTArray $ do
-  arr <- fillSTArray (0,40319) 20
+buildDeepTableST :: Int -> (Pos -> [Pos]) -> Array Pos Depth 
+buildDeepTableST sz mover = runSTArray $ do
+  arr <- fillSTArray (0, sz) 20
   writeArray arr 0 0
   ListT.toList . fixed arr $ 0 
   return arr
