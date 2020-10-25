@@ -1,4 +1,4 @@
-module KubGeometry (x2MoveSlow, y2MoveSlow, z2MoveSlow, x1MoveSlow, x1MoveCubie) where
+module KubGeometry (x2MoveSlow, y2MoveSlow, z2MoveSlow, x1MoveSlow, y1MoveSlow) where
 
 import KubTypes
 import CubieCoord
@@ -142,3 +142,36 @@ x1MoveCubie np = map snd . sortOn fst . map (x1ElemRotate np) . zip [0..]
 
 x1MoveSlow :: Povorot -> Pos -> Pos
 x1MoveSlow = mainRotatesToFullRotates "" $ \np -> toX1 . x1MoveCubie np . fromX1
+
+
+{-           _________
+            /  /2 /  /|
+           /__/__/__/ | 
+          /1 /  /3 /| |
+         /__/__/__/ |/|
+        /  /0 /  /|3|11|
+       /__/ _/__/ |/|/| 
+       |  |0 |  | | | / 
+       |__|__|__|/|/|/ 
+       |9 |  |8 |8|7/
+       |__|__|__|/|/
+       |  |4 |  | / 
+       |__|__|__|/    
+-}
+
+y1ElemRotate :: Povorot -> (Int, Int) -> (Int, Int)
+y1ElemRotate np p = let
+                      cycles np | np == downSide  = rotateOr (4, 0) (7, 0) (6, 0) (5, 0)
+                                | np == frontSide = rotateOr (4, 1) (9, 1) (0, 1) (8, 1)
+                                | np == leftSide  = rotateOr (1, 0) (9, 0) (5, 0) (10, 0)
+                                | np == rightSide = rotateOr (8, 0) (3, 0) (11, 0) (7, 0)
+                                | np == backSide  = rotateOr (11, 1) (2, 1) (10, 1) (6, 1)
+                                | np == upSide    = rotateOr (0, 0) (1, 0) (2, 0) (3, 0)
+                    in
+                      case cycles np p of (n, orient) -> (n, orient `mod` 2)
+                      
+y1MoveCubie :: Povorot -> [Int] -> [Int]
+y1MoveCubie np = map snd . sortOn fst . map (y1ElemRotate np) . zip [0..]
+
+y1MoveSlow :: Povorot -> Pos -> Pos
+y1MoveSlow = mainRotatesToFullRotates "" $ \np -> toY1 . y1MoveCubie np . fromY1

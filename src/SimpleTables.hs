@@ -45,6 +45,16 @@ x1DeepTable :: UArray Pos Depth
 x1DeepTable = toUnboxedArray $ buildDeepTableST x1Max (moverFast x1MoveTable)
 ----------------------------------------------------------------
 
+
+----------------------------------------------------------------
+y1MoveTable :: UArray (Povorot, Pos) Pos
+y1MoveTable  = buildMoveTable y1Max $ buildMover y1MoveSlow
+
+
+y1DeepTable :: UArray Pos Depth
+y1DeepTable = toUnboxedArray $ buildDeepTableST y1Max (moverFast y1MoveTable)
+----------------------------------------------------------------
+
 --
 
 toUnboxedArray arr = let
