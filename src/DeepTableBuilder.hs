@@ -40,15 +40,15 @@ buildDeepTable mover = fst $ execState (fixed [0]) (fromList [(0,0)], 0)  where
 -----------------------------------------------------------------------
 
 ------------------- ST Array version ----------------------------------
-buildDeepTableST :: Int -> (Pos -> [Pos]) -> Array Pos Depth 
-buildDeepTableST sz mover = runSTArray $ do
+buildDeepTableST :: Int -> (Pos -> [Pos]) -> UArray Pos Depth
+buildDeepTableST sz mover = runSTUArray $ do
   arr <- fillSTArray (0, sz) 20
   writeArray arr 0 0
   ListT.toList . fixed arr $ 0 
   return arr
   where
 
-  fixed :: STArray s Pos Depth -> Pos -> ListT (ST s) Pos
+  fixed :: STUArray s Pos Depth -> Pos -> ListT (ST s) Pos
   fixed arr = let
                 steps = map (step mover arr) [0..] 
               in                             
@@ -56,7 +56,7 @@ buildDeepTableST sz mover = runSTArray $ do
 ------------------------------------------------------------------------
 
 
-step :: (Pos -> [Pos]) -> STArray s Pos Depth -> Depth -> Pos ->  ListT (ST s) Pos
+step :: (Pos -> [Pos]) -> STUArray s Pos Depth -> Depth -> Pos ->  ListT (ST s) Pos
 step mover arr d p = do 
     p <- fromFoldable . mover $ p
     isUpdated <- lift $ testAndUpdate arr (d+1) p
@@ -72,7 +72,7 @@ fillSTArray range e = let sz = rangeSize range
 
 
 
-testAndUpdate :: STArray s Pos Depth -> Depth -> Pos -> ST s Bool
+testAndUpdate :: STUArray s Pos Depth -> Depth -> Pos -> ST s Bool
 testAndUpdate arr d p = do
   dOld <- readArray arr p
   let needUpdate = dOld > d

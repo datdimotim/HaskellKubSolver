@@ -3,7 +3,7 @@ module Main where
 import Control.Monad.Except
 import SimpleTables
 import CubieCoord
-import KubGeometry
+import CoordsMovesSlow
 import KubTypes
 import Data.Array.Unboxed
 import Data.Array.MArray
