@@ -55,3 +55,12 @@ y1DeepTable :: UArray Pos Depth
 y1DeepTable = buildDeepTableST y1Max (moverFast y1MoveTable)
 ----------------------------------------------------------------
 
+----------------------------------------------------------------
+z1MoveTable :: UArray (Povorot, Pos) Pos
+z1MoveTable  = buildMoveTable z1Max $ buildMover z1MoveSlow
+
+
+z1DeepTable :: UArray Pos Depth
+z1DeepTable = buildDeepTableST z1Max (moverFast z1MoveTable)
+----------------------------------------------------------------
+

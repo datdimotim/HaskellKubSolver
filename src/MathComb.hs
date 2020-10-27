@@ -45,7 +45,6 @@ cNumberToNumber :: [Z] -> Z
 cNumberToNumber ls = formula sel m where
  sel = reverse $ listSelected ls 0
  m = length sel
- n = length ls
  listSelected []  _ = []
  listSelected (l:ls) i = if l==1 then i:listSelected ls (i+1) else listSelected ls (i+1)
  formula [] _  = 0

@@ -76,7 +76,10 @@ rebroCubieRotate np p = let
 -- ====================================================================================
 
 permutations :: (Povorot -> (Int, Int) -> (Int, Int)) -> Povorot -> [Int] -> [Int]
-permutations cubieMover np = map $ fst . cubieMover np . (, 0) 
+permutations cubieMover np = let
+                               perm = fst . cubieMover np . (,0)
+                             in
+                               map snd . sortOn fst . map (\(pl, n) -> (perm pl, n)) . zip [0..]
 
 
 orientations :: (Povorot -> (Int, Int) -> (Int, Int)) -> Povorot -> [Int] -> [Int]

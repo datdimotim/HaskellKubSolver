@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module CoordsMovesSlow (x2MoveSlow, y2MoveSlow, z2MoveSlow, x1MoveSlow, y1MoveSlow) where
+module CoordsMovesSlow (x2MoveSlow, y2MoveSlow, z2MoveSlow, x1MoveSlow, y1MoveSlow, z1MoveSlow) where
 
 import KubTypes
 import CubieCoord
@@ -70,3 +70,13 @@ x1MoveSlow = moveInCoordsSlow (mkFromUgolOr . fromX1) (toX1 . projectUgolOr)
 
 y1MoveSlow :: Povorot -> Pos -> Pos
 y1MoveSlow = moveInCoordsSlow (mkFromRebroOr . fromY1) (toY1 . projectRebroOr)
+
+z1MoveSlow :: Povorot -> Pos -> Pos
+z1MoveSlow = let
+               rebroToZCubie = map $ \n -> if n >= 8 then 1 else 0
+               rebroFromZCubie _ _ [] = []
+               rebroFromZCubie ud mid (n:ns) = if n == 0
+                                                 then ud : rebroFromZCubie (ud+1) mid ns 
+                                                 else mid : rebroFromZCubie ud (mid+1) ns
+             in 
+               moveInCoordsSlow (mkFromRebroPerm . reverse . rebroFromZCubie 0 8 . fromZ1) (toZ1 . rebroToZCubie . reverse . projectRebroPerm)
