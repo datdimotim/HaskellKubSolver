@@ -243,14 +243,45 @@ rndKub = let
          in
            rndPred validator r
 
+solvedKub = Kub (zipWith CubieU [0..7] (replicate 8 0)) (zipWith CubieR [0..11] (replicate 12 0))
 
 testRotate = let
-               kub = Kub (zipWith CubieU [0..7] (replicate 8 0)) (zipWith CubieR [0..11] (replicate 12 0))
-               k1 = projectToCoords1 kub
-               k2 = projectToCoords2 kub
-               kub' = rotate 16 . rotate 10 $ kub
+               k1 = projectToCoords1 solvedKub
+               k2 = projectToCoords2 solvedKub
+               kub' = rotate 16 . rotate 10 $ solvedKub
              in
                k1 == (0, 0, 0) 
                && k2 == (0, 0, 0) 
                && [1,2,0,0,1,0,0,2] == projectUgolOr kub'
                && [0,4,1,2,7,5,6,3] == projectUgolPerm kub'
+
+d = 1
+d' = 2
+d2 = 3
+f = 4
+f' = 5
+f2 = 6
+l = 7
+l' = 8
+l2 = 9
+r = 10
+r' = 11
+r2 = 12
+b = 13
+b' = 14
+b2 = 15
+u = 16
+u' = 17
+u2 = 18
+
+singleMoveInverse :: Int -> Int
+singleMoveInverse m | m == 0 = 0 | (m - 1) `mod` 3 == 2 = m | (m - 1) `mod` 3 == 0 = m + 1 | (m - 1) `mod` 3 == 1 = m - 1
+                    
+inverseMoves :: [Int] -> [Int]
+inverseMoves = map singleMoveInverse . reverse  
+               
+scrambledKub= let
+               moves =  [u2, l', b2, d', l', b', f2, u', r, f, f2, r2, f2, u, b2, u', f2, d, b2, r2, d]
+               scrambed  = applyMoves (inverseMoves moves) solvedKub
+             in
+               scrambed

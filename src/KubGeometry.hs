@@ -22,6 +22,11 @@ rotateOr (a, doa) (b, dob) (c, doc) (d, dod) (x, ox) | x == a    = (b, ox + doa)
                                                      | otherwise = (x, ox)
                                                                                                           
 -- ===============================================================================
+data COLOR = R | W | G | B | Y | O 
+
+ugolCubies :: [[COLOR]]
+ugolCubies = [[O, B, W], [O, W, G], [O, G, Y], [O, Y, B], [R, W, B], [R, G, W], [R, Y, G], [R, B, Y]]
+
 {-           _________
             /2 /  /3 /|
            /__/__/__/3|
