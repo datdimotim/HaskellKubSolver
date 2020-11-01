@@ -49,7 +49,7 @@ testEntryPoint = do
    putStrLn $ "Total time: " ++ show (diffMicros `div` 1000) ++ "ms"
    putStrLn ""
    putStrLn "benchmarking"
-   benchmark
+   withTimer 100000
    return ()
 
 
