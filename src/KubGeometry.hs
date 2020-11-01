@@ -117,9 +117,9 @@ mainRotatesToFullRotates rotater np | np == 0               = id
                                     | (np - 1) `mod` 3 == 0 = rotater np
 
 
-data CubieU = CubieU {getNumberU :: Int, getOrientU :: Int} deriving Show
-data CubieR = CubieR {getNumberR :: Int, getOrientR :: Int} deriving Show
-data Kub = Kub {getUgol :: [CubieU], getRebro :: [CubieR]} deriving Show
+data CubieU = CubieU {getNumberU :: Int, getOrientU :: Int} deriving (Show, Eq)
+data CubieR = CubieR {getNumberR :: Int, getOrientR :: Int} deriving (Show, Eq)
+data Kub = Kub {getUgol :: [CubieU], getRebro :: [CubieR]} deriving (Show, Eq)
 
 rotateKubMainAxis :: Povorot -> Kub -> Kub
 rotateKubMainAxis np (Kub u r) = let
