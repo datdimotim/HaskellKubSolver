@@ -10,9 +10,14 @@ import CoordsMovesSlow
 import CubieCoord
 import System.Random (randomIO)
 
+printMove :: Int -> [Char]
+printMove = (("" : words "D D' D2 F F' F2 L L' L2 R R' R2 B B' B2 U U' U2") !!)
 
 singleMoveInverse :: Int -> Int
-singleMoveInverse m | m == 0 = 0 | (m - 1) `mod` 3 == 2 = m | (m - 1) `mod` 3 == 0 = m + 1 | (m - 1) `mod` 3 == 1 = m - 1
+singleMoveInverse m | m == 0 = 0 
+                    | (m - 1) `mod` 3 == 2 = m 
+                    | (m - 1) `mod` 3 == 0 = m + 1 
+                    | (m - 1) `mod` 3 == 1 = m - 1
                     
 inverseMoves :: [Int] -> [Int]
 inverseMoves = map singleMoveInverse . reverse 
