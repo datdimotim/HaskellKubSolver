@@ -12,10 +12,13 @@ rightSide = 10
 backSide = 13
 upSide = 16
 
-rotateOr (a, doa) (b, dob) (c, doc) (d, dod) (x, ox) | x == a    = (b, ox - dob)
-                                                     | x == b    = (c, ox - doc)
-                                                     | x == c    = (d, ox - dod)
-                                                     | x == d    = (a, ox - doa)
+rotateOr (a, doa) (b, dob) (c, doc) (d, dod) (x, ox) | x == a    = (b, ox + doa)  -- Если x это место кубика равное a, 
+                                                                                  -- то кубик на этом месте после поворота, 
+                                                                                  -- окажется на месте b
+                                                                                  -- И к исходной ориентации ox, прибавится dob
+                                                     | x == b    = (c, ox + dob)
+                                                     | x == c    = (d, ox + doc)
+                                                     | x == d    = (a, ox + dod)
                                                      | otherwise = (x, ox)
                                                                                                           
 -- ===============================================================================
