@@ -19,6 +19,7 @@ import System.IO
 import Data.UnixTime
 import Data.Ratio
 import MathComb
+import Benchmark
 
 
 
@@ -46,6 +47,9 @@ testEntryPoint = do
    finishTime <- getUnixTime
    let diffMicros = unixDiffTimeToMicros $ finishTime `diffUnixTime` startTime
    putStrLn $ "Total time: " ++ show (diffMicros `div` 1000) ++ "ms"
+   putStrLn ""
+   putStrLn "benchmarking"
+   benchmark
    return ()
 
 
