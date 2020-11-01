@@ -12,10 +12,10 @@ rightSide = 10
 backSide = 13
 upSide = 16
 
-rotateOr (a, doa) (b, dob) (c, doc) (d, dod) (x, ox) | x == a    = (d, ox + dod)
-                                                     | x == b    = (a, ox + doa)
-                                                     | x == c    = (b, ox + dob)
-                                                     | x == d    = (c, ox + doc)
+rotateOr (a, doa) (b, dob) (c, doc) (d, dod) (x, ox) | x == a    = (b, ox - dob)
+                                                     | x == b    = (c, ox - doc)
+                                                     | x == c    = (d, ox - dod)
+                                                     | x == d    = (a, ox - doa)
                                                      | otherwise = (x, ox)
                                                                                                           
 -- ===============================================================================

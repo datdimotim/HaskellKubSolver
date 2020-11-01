@@ -27,7 +27,7 @@ testEntryPoint = do
    putStrLn "Starting"
    --Right except <- runExceptT $ testAll `catchError` return
    --putStrLn except
-   --print $ length (elems moveTable) 
+   --print $ length (elems moveTable)
    --print $ depths
    print $ chart x2DeepTable
    print $ chart y2DeepTable
@@ -40,7 +40,7 @@ testEntryPoint = do
    p <- rndPos2
    print p
    print (head $ solver2Phase p)
-   
+
    p1 <-rndPos1
    print p1
    print (head $ solver1Phase p1)
@@ -62,13 +62,13 @@ unixDiffTimeToMicros diff = ((* 1000000) . Data.Ratio.numerator .toRational . ud
 testAll :: ExceptT String IO String
 testAll = do
     testIO "testX1" x1Max (toX1.fromX1)
-    testIO "testY1" y1Max (toY1.fromY1) 
+    testIO "testY1" y1Max (toY1.fromY1)
     testIO "testZ1" z1Max (toZ1.fromZ1)
     testIO "testX2" x2Max (toX2.fromX2)
-    testIO "testY2" y2Max (toY2.fromY2) 
+    testIO "testY2" y2Max (toY2.fromY2)
     testIO "testZ2" z2Max (toZ2.fromZ2)
     return "All tests passed"
-    
+
 
 
 testIO name bnd f =  do
@@ -101,7 +101,7 @@ chart table = takeWhile (/= 0) $ map (length . f) [0..] where
 backtrack :: (a -> [a]) -> (a -> Bool) -> a -> [a]
 backtrack c p i = filter p [i] ++ concatMap (backtrack c p) (c i)
 
-data N = N { 
+data N = N {
              position :: (Int, Int, Int),
              moves  :: [Int],
              getDepth :: Depth
@@ -117,20 +117,20 @@ applyMoves [] k = k
 applyMoves (m:ms) k = applyMoves ms (rotate m k)
 
 kubSolver :: Kub -> [[Int]]
-kubSolver kub =  let 
+kubSolver kub =  let
                    k1 = projectToCoords1 kub
                    completeSolution ms = let
                                            kub' = applyMoves ms kub
                                            k2 = projectToCoords2 kub'
                                            ms2 = moves . head $ solver2Phase k2
-                                         in 
+                                         in
                                            ms ++ map m10to18 ms2
                  in
                    map (completeSolution . moves) (solver1Phase k1)
-                   
+
 
 solver2Phase :: (Int, Int, Int) -> [N]
-solver2Phase = mkSolver nextVars2Phase 
+solver2Phase = mkSolver nextVars2Phase
 
 solver1Phase :: (Int, Int, Int) -> [N]
 solver1Phase = mkSolver nextVars1Phase
@@ -141,7 +141,7 @@ mkSolver nextVars p = let
              nullFilter = takeWhile (/=0)
            in
              map (\(N p m d) -> N p (reverse . nullFilter $ m) d) solutions
-                
+
 
 prettyPrint :: Show a => [a] -> IO ()
 prettyPrint = putStrLn . concatMap ((++ ['\n']) . show)
@@ -152,33 +152,33 @@ nextVars2Phase (N (x, y, z) is d) = let
                                   moveWithId p x y z = if p == 0
                                                        then (x, y, z)
                                                        else (x2MoveTable ! (p, x), y2MoveTable ! (p, y), z2MoveTable ! (p, z))
-                              in 
-                                do 
+                              in
+                                do
                                   p <- [0..10]
-                                  guard $ hodPredHod pred p 
+                                  guard $ hodPredHod pred p
                                   let (x', y', z') = moveWithId p x y z
                                   let xd = x2DeepTable ! x'
                                   let yd = y2DeepTable ! y'
                                   let zd = z2DeepTable ! z'
-                                  let dEst = maximum [xd, yd, zd] 
+                                  let dEst = maximum [xd, yd, zd]
                                   guard (dEst <= d-1)
                                   return $ N (x', y', z') (p:is) (d-1)
-                                  
+
 nextVars1Phase :: N -> [N]
 nextVars1Phase (N (x, y, z) is d) = let
                                   pred = if null is then 0 else head is
                                   moveWithId p x y z = if p == 0
                                                        then (x, y, z)
                                                        else (x1MoveTable ! (p, x), y1MoveTable ! (p, y), z1MoveTable ! (p, z))
-                              in 
-                                do 
+                              in
+                                do
                                   p <- [0..18]
-                                  guard $ hodPredHod pred p 
+                                  guard $ hodPredHod pred p
                                   let (x', y', z') = moveWithId p x y z
                                   let xd = x1DeepTable ! x'
                                   let yd = y1DeepTable ! y'
                                   let zd = z1DeepTable ! z'
-                                  let dEst = maximum [xd, yd, zd] 
+                                  let dEst = maximum [xd, yd, zd]
                                   guard (dEst <= d-1)
                                   return $ N (x', y', z') (p:is) (d-1)
 
@@ -191,16 +191,16 @@ validPos = do
             return (x, y, z)
 
 m10to18 :: Int -> Int
-m10to18 m | m == 0 = 0 
+m10to18 m | m == 0 = 0
           | otherwise = [1,2,3,6,9,12,15,16,17,18] !! (m-1)
 
 posValidator (x, y, z) = even $ perestParity (fromX2 x) + perestParity (fromY2 y) + perestParity (fromZ2 z)
 
 hodPredHod 0 _ = True
 hodPredHod p h = let
-                   r = (`div` 3) . (\x -> x-1) 
+                   r = (`div` 3) . (\x -> x-1)
                    b1 = p /= 0 && h == 0
-                   b2 = r p == r h 
+                   b2 = r p == r h
                    b3 = r p == 0 && r h == 5
                    b4 = r p == 1 && r h == 4
                    b5 = r p == 2 && r h == 3
@@ -211,7 +211,7 @@ rnd :: Int -> IO Int
 rnd b = fmap (`mod` b) randomIO
 
 rndPred :: (a -> Bool) -> IO a -> IO a
-rndPred p rnd = rnd >>= \a -> if p a 
+rndPred p rnd = rnd >>= \a -> if p a
                               then return a
                               else rndPred p rnd
 
@@ -224,23 +224,33 @@ rndPos2 = let
                return (x, y, z)
          in
            rndPred posValidator r
-           
+
 rndPos1 = do
             x <- rnd x1Max
             y <- rnd y1Max
             z <- rnd z1Max
             return (x, y, z)
-            
-            
+
+
 rndKub = let
-            validator k = even $ perestParity (projectRebroPerm k) + perestParity (projectUgolPerm k) 
+            validator k = even $ perestParity (projectRebroPerm k) + perestParity (projectUgolPerm k)
             r = do
               ugolPerest <- rnd x2Max
-              rebroPerest <- rnd ((y2Max+1) * 9 * 10 * 11 * 12 - 1) 
+              rebroPerest <- rnd ((y2Max+1) * 9 * 10 * 11 * 12 - 1)
               ugolOr <- rnd x1Max
               rebroOr <- rnd y1Max
-              return $ Kub (zipWith CubieU (fromX2 ugolPerest) (fromX1 ugolOr)) (zipWith CubieR ((`numberToFacNumber` 12) rebroPerest) (fromY1 rebroOr)) 
-         in 
+              return $ Kub (zipWith CubieU (fromX2 ugolPerest) (fromX1 ugolOr)) (zipWith CubieR ((`numberToFacNumber` 12) rebroPerest) (fromY1 rebroOr))
+         in
            rndPred validator r
 
 
+testRotate = let
+               kub = Kub (zipWith CubieU [0..7] (replicate 8 0)) (zipWith CubieR [0..11] (replicate 12 0))
+               k1 = projectToCoords1 kub
+               k2 = projectToCoords2 kub
+               kub' = rotate 16 . rotate 10 $ kub
+             in
+               k1 == (0, 0, 0) 
+               && k2 == (0, 0, 0) 
+               && [1,2,0,0,1,0,0,2] == projectUgolOr kub'
+               && [0,4,1,2,7,5,6,3] == projectUgolPerm kub'
