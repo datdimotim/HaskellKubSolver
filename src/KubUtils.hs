@@ -9,6 +9,8 @@ import MathComb
 import CoordsMovesSlow
 import CubieCoord
 import System.Random (randomIO)
+import KubSolver (kubSolver)
+import Data.Foldable (traverse_)
 
 printMove :: Int -> [Char]
 printMove = (("" : words "D D' D2 F F' F2 L L' L2 R R' R2 B B' B2 U U' U2") !!)
@@ -57,3 +59,34 @@ rndKub = let
               return $ Kub (zipWith CubieU (fromX2 ugolPerest) (fromX1 ugolOr)) (zipWith CubieR ((`numberToFacNumber` 12) rebroPerest) (fromY1 rebroOr))
          in
            rndPred validator r
+           
+           
+genKubesTestSet :: Int -> IO ()
+genKubesTestSet n = do
+                     kbs <- traverse (const rndKub) [1..n]
+                     writeFile "test.set" $ show kbs
+                     
+readKubesTestSet :: IO [Kub]
+readKubesTestSet = read <$> readFile "test.set"
+
+
+measureTime :: IO () -> IO ()
+measureTime action = do
+                       start <- getUnixTime
+                       action
+                       finish <- getUnixTime
+                       let timeMs = unixDiffTimeToMicros (finish `diffUnixTime` start) `div` 1000
+                       putStrLn $ "time: " ++ show timeMs ++ "ms"
+
+
+testSetBenchmark :: IO ()
+testSetBenchmark = let
+                     solveAndPrint kub = print . head . kubSolver $ kub
+                     action = do
+                                kbs <- readKubesTestSet
+                                traverse_ solveAndPrint kbs
+                   in 
+                     measureTime action 
+                     
+  
+                     
