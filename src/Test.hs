@@ -81,8 +81,6 @@ test name bnd f = if all (\ i -> i == f i) [0 .. bnd] then
                       throwError (name ++ " failed!!!")
                      
 
-solvedKub = Kub (zipWith CubieU [0..7] (replicate 8 0)) (zipWith CubieR [0..11] (replicate 12 0))
-
 testRotate = let
                k1 = projectToCoords1 solvedKub
                k2 = projectToCoords2 solvedKub

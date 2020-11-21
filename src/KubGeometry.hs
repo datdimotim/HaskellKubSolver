@@ -1,6 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
-module KubGeometry (Kub (..), CubieR (..), CubieU (..), rotate) where
+module KubGeometry (Kub (..), CubieR (..), CubieU (..), rotate, solvedKub) where
 
 import KubTypes (Povorot)
 import Data.List (sortOn)
@@ -132,3 +132,6 @@ rotateKubMainAxis np (Kub u r) = let
 
 rotate :: Povorot -> Kub -> Kub
 rotate = mainRotatesToFullRotates rotateKubMainAxis
+
+solvedKub :: Kub
+solvedKub = Kub (zipWith CubieU [0..7] (replicate 8 0)) (zipWith CubieR [0..11] (replicate 12 0))

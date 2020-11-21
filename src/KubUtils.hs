@@ -70,6 +70,25 @@ readKubesTestSet :: IO [Kub]
 readKubesTestSet = read <$> readFile "test.set"
 
 
+genKubesTestSetMoves :: Int -> IO ()
+genKubesTestSetMoves n = let
+                           rndMoves = inverseMoves . head . kubSolver <$> rndKub 
+                         in 
+                           do
+                             kbs <- traverse (const rndMoves) [1..n]
+                             writeFile "test.moves" $ show kbs
+                             
+
+readKubesTestSetMoves :: IO [Kub]
+readKubesTestSetMoves = let
+                          readMoves = read :: String -> [[Int]]
+                          setKube = foldl (flip rotate) solvedKub 
+                        in 
+                          map setKube . readMoves <$> readFile "test.moves"
+                           
+
+
+
 measureTime :: IO () -> IO ()
 measureTime action = do
                        start <- getUnixTime
@@ -83,7 +102,7 @@ testSetBenchmark :: IO ()
 testSetBenchmark = let
                      solveAndPrint kub = print . (\ms -> (ms, length ms)) . head . kubSolver $ kub
                      action = do
-                                kbs <- readKubesTestSet
+                                kbs <- readKubesTestSetMoves
                                 traverse_ solveAndPrint kbs
                    in 
                      measureTime action 
