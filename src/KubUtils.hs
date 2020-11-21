@@ -81,7 +81,7 @@ measureTime action = do
 
 testSetBenchmark :: IO ()
 testSetBenchmark = let
-                     solveAndPrint kub = print . head . kubSolver $ kub
+                     solveAndPrint kub = print . (\ms -> (ms, length ms)) . head . kubSolver $ kub
                      action = do
                                 kbs <- readKubesTestSet
                                 traverse_ solveAndPrint kbs

@@ -64,7 +64,7 @@ nextVars2Phase (N (!x, !y, !z) is !d) = let
                               in
                                 do
                                   p <- [0..10]
-                                  guard $ hodPredHod pred p
+                                  guard $ hodPredHod (m10to18 pred) (m10to18 p)
                                   let (!x', !y', !z') = moveWithId p x y z
                                   let !xd = x2DeepTable ! x'
                                   let !yd = y2DeepTable ! y'
@@ -96,12 +96,14 @@ m10to18 = ([0,1,2,3,6,9,12,15,16,17,18] !!)
          
 hodPredHod :: Int -> Int -> Bool   
 hodPredHod 0 _ = True
-hodPredHod !p !h = let
-                   r = (`div` 3) . (\x -> x-1)
-                   b1 = p /= 0 && h == 0
-                   b2 = r p == r h
-                   b3 = r p == 0 && r h == 5
-                   b4 = r p == 1 && r h == 4
-                   b5 = r p == 2 && r h == 3
+hodPredHod _ 0 = False
+hodPredHod !p !h = let 
+                   pa = (p - 1) `div` 3
+                   ha = (h - 1) `div` 3
+                   
+                   r1 = pa == ha
+                   r2 = pa == 5 && ha == 0
+                   r3 = pa == 4 && ha == 1
+                   r4 = pa == 3 && ha == 2 
                  in
-                   not $ or [b1, b2, b3, b4, b5]
+                   not $ or [r1, r2, r3, r4]
